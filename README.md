@@ -136,11 +136,10 @@ To get a group ID, you can add a temporary `console.log(chat.id._serialized)` wh
 
 This bot uses [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js), an unofficial library. WhatsApp does not officially support bots. Use at your own risk. For business use, consider the [official WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/).
 
-## Deploy to Replit (24/7)
+## Deploy 24/7
 
-To run the bot on Replit, see **[REPLIT.md](REPLIT.md)** for full instructions. You'll need:
-- A free MongoDB Atlas account (for session storage)
-- Set `MONGODB_URI` in Replit Secrets
+- **Replit:** See [REPLIT.md](REPLIT.md)
+- **Replit failing?** See [DEPLOYMENT.md](DEPLOYMENT.md) for **Railway**, **Render**, **Oracle Cloud**, and **Fly.io**
 
 ## License
 
