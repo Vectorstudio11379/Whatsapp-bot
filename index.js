@@ -40,7 +40,7 @@ const spamDetector = new SpamDetector(config.spam);
 
 const puppeteerConfig = {
   headless: true,
-  protocolTimeout: 120000, // 2 min - fixes "Runtime.callFunctionOn timed out" on slow connections
+  protocolTimeout: 600000, // 10 min - Railway/cloud can be slow; fixes "Runtime.callFunctionOn timed out"
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
