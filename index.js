@@ -57,23 +57,43 @@ if (chromePath) {
 
 async function createClient() {
   let authStrategy;
+  const clientId = process.env.CLIENT_ID || 'mirola-bot';
+  const clearSession = /^(1|true|yes)$/i.test(process.env.CLEAR_SESSION || '');
+
   if (useRemoteAuth) {
     const mongoose = require('mongoose');
     const { MongoStore } = require('wwebjs-mongo');
     await mongoose.connect(process.env.MONGODB_URI);
     const store = new MongoStore({ mongoose });
+    if (clearSession) {
+      for (const name of ['RemoteAuth', `RemoteAuth-${clientId}`]) {
+        try {
+          await store.delete({ session: name });
+          console.log('🗑️ Cleared session', name);
+        } catch (e) {
+          // Ignore - session may not exist
+        }
+      }
+      console.log('📱 Scan the new QR code when it appears. Remove CLEAR_SESSION after linking.');
+    }
     authStrategy = new RemoteAuth({
       store,
+      clientId,
       backupSyncIntervalMs: 300000,
     });
-    console.log('Using MongoDB for session (Replit)');
+    console.log('Using MongoDB for session (Railway)');
   } else {
+    if (clearSession && fs.existsSync('./.wwebjs_auth')) {
+      fs.rmSync('./.wwebjs_auth', { recursive: true });
+      console.log('🗑️ Cleared local session - you will need to scan QR again');
+    }
     authStrategy = new LocalAuth({ dataPath: './.wwebjs_auth' });
   }
 
   return new Client({
     authStrategy,
     puppeteer: puppeteerConfig,
+    authTimeoutMs: 120000, // 2 min to scan QR
   });
 }
 
@@ -84,7 +104,7 @@ async function main() {
 
   // QR Code for first-time login
   client.on('qr', (qr) => {
-    console.log('\n📱 Scan this QR code with WhatsApp on your phone:\n');
+    console.log('\n📱 Scan this QR code with WhatsApp on your phone (scan quickly - it expires in ~20 sec):\n');
     qrcode.generate(qr, { small: true });
     // Cloud/Railway: terminal QR may not render - open this URL in your browser to scan
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`;
@@ -177,6 +197,7 @@ client.on('authenticated', () => {
 
 client.on('auth_failure', (msg) => {
   console.error('❌ Authentication failed:', msg);
+  console.error('💡 Try: Set CLEAR_SESSION=true in Railway, redeploy, then scan the new QR quickly.');
 });
 
 client.on('disconnected', (reason) => {

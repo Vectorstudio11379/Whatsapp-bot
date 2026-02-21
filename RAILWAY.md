@@ -74,3 +74,5 @@ Example: `mongodb+srv://user:MyPass123@cluster0.xxxxx.mongodb.net/whatsapp`
 **"Application failed to respond"** – Normal for WhatsApp bots (no HTTP server). Railway may show this but the bot still runs. Check logs.
 
 **Session lost after redeploy** – Session is saved in MongoDB. You should NOT need to scan again unless you clear the DB.
+
+**"Couldn't link device"** – Corrupted session. Fix: Add variable `CLEAR_SESSION` = `true` in Railway Variables, redeploy. When the new QR appears, scan it quickly (QR expires in ~20 sec). After linking, remove `CLEAR_SESSION` and redeploy.
