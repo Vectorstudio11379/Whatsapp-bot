@@ -37,50 +37,13 @@ If Replit keeps failing, try these platforms. All need **MongoDB** for session s
 
 ---
 
-## 3. Oracle Cloud (Always free VPS)
+## 3. Oracle Cloud (Always free VPS) ⭐ Recommended for free 24/7
 
 **Best for:** Truly free, always-on, full control
 
 You get a **free VM** that runs 24/7. More setup, but no recurring cost.
 
-### Steps
-
-1. **Create account:** [oracle.com/cloud/free](https://www.oracle.com/cloud/free)
-2. **Create a VM:**
-   - Compute → Instances → Create Instance
-   - Choose **Always Free** shape (Ampere or VM.Standard.E2.1.Micro)
-   - Download SSH key
-3. **Connect via SSH** and run:
-
-```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
-
-# Install Node.js 20
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Install Chromium dependencies (for Puppeteer)
-sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libcups2 libxss1 libxtst6
-
-# Clone your repo
-git clone https://github.com/Vectorstudio11379/Whatsapp-bot.git
-cd Whatsapp-bot
-
-# Install and run
-npm install
-export MONGODB_URI="your-mongodb-uri-here"
-npm start
-```
-
-4. Scan QR code. To keep running after you disconnect, use `tmux` or `screen`:
-
-```bash
-sudo apt install -y tmux
-tmux new -s bot
-npm start
-# Press Ctrl+B then D to detach. Bot keeps running.
-```
+**📖 Full step-by-step guide:** [ORACLE_CLOUD.md](ORACLE_CLOUD.md)
 
 ---
 
