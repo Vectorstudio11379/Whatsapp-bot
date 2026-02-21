@@ -4,18 +4,11 @@ If Replit keeps failing, try these platforms. All need **MongoDB** for session s
 
 ---
 
-## 1. Railway (Easiest – $5 free credit)
+## 1. Railway (Easiest – $5 free credit) ⭐ Recommended
 
 **Best for:** Quick deploy, Puppeteer support
 
-1. Go to [railway.app](https://railway.app) → Sign up
-2. **New Project** → **Deploy from GitHub** → Select `Vectorstudio11379/Whatsapp-bot`
-3. Add **Variables** (Settings → Variables):
-   - `MONGODB_URI` = your MongoDB connection string
-4. Click **Deploy**
-5. Check **Logs** for the QR code → scan with WhatsApp
-
-**Note:** Railway gives ~$5 free credit. After that, ~$5/month. Puppeteer works on Railway.
+**📖 Full step-by-step guide:** [RAILWAY.md](RAILWAY.md)
 
 ---
 

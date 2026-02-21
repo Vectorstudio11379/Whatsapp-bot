@@ -138,9 +138,10 @@ This bot uses [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js),
 
 ## Deploy 24/7
 
-- **Oracle Cloud (free, always-on):** See [ORACLE_CLOUD.md](ORACLE_CLOUD.md) ⭐
+- **Railway (easiest):** See [RAILWAY.md](RAILWAY.md) ⭐
+- **Oracle Cloud (free, always-on):** See [ORACLE_CLOUD.md](ORACLE_CLOUD.md)
 - **Replit:** See [REPLIT.md](REPLIT.md)
-- **Other options:** See [DEPLOYMENT.md](DEPLOYMENT.md) for Railway, Render, Fly.io
+- **Other options:** See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## License
 
