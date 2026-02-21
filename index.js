@@ -83,9 +83,12 @@ async function main() {
 
   // QR Code for first-time login
   client.on('qr', (qr) => {
-  console.log('\n📱 Scan this QR code with WhatsApp on your phone:\n');
-  qrcode.generate(qr, { small: true });
-});
+    console.log('\n📱 Scan this QR code with WhatsApp on your phone:\n');
+    qrcode.generate(qr, { small: true });
+    // Cloud/Railway: terminal QR may not render - open this URL in your browser to scan
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`;
+    console.log('\n🔗 Or open this URL in your browser to see the QR code:\n', qrUrl, '\n');
+  });
 
 client.on('ready', async () => {
   console.log('✅ Bot is ready! Connected to WhatsApp.');
