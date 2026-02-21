@@ -40,6 +40,7 @@ const spamDetector = new SpamDetector(config.spam);
 
 const puppeteerConfig = {
   headless: true,
+  protocolTimeout: 120000, // 2 min - fixes "Runtime.callFunctionOn timed out" on slow connections
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
@@ -121,6 +122,7 @@ client.on('ready', async () => {
         ? config.broadcastGroups
         : [{ groupId: config.broadcastGroupId, message: config.broadcastMessage, imagePath: config.broadcastImagePath }];
 
+      console.log('📢 Broadcast: Starting broadcast to', targets.length, 'group(s)...');
       for (const target of targets) {
         try {
           const chat = await client.getChatById(target.groupId);
@@ -139,16 +141,18 @@ client.on('ready', async () => {
           } else {
             const altPath = imgPath.replace(/\.jpeg$/i, '.jpg');
             if (fs.existsSync(altPath)) media = MessageMedia.fromFilePath(altPath);
+            else console.log('Broadcast: Image not found at', imgPath, '- sending text only');
           }
 
           if (media) {
             await chat.sendMessage(media, { caption: target.message });
+            console.log('Broadcast: ✅ Sent (with image) to', chat.name);
           } else {
             await chat.sendMessage(target.message);
+            console.log('Broadcast: ✅ Sent (text only) to', chat.name);
           }
-          console.log('Broadcast sent to:', chat.name);
         } catch (err) {
-          console.error('Broadcast failed for', target.groupId, ':', err.message);
+          console.error('Broadcast: ❌ Failed for', target.groupId, ':', err.message);
         }
       }
     };
@@ -157,9 +161,11 @@ client.on('ready', async () => {
       ? config.broadcastGroups
       : [{ groupId: config.broadcastGroupId, message: config.broadcastMessage, imagePath: config.broadcastImagePath }];
 
-    runBroadcast(); // Send immediately on startup
+    // Wait 10 sec for WhatsApp to fully sync after connect, then broadcast
+    setTimeout(() => runBroadcast(), 10000);
     setInterval(runBroadcast, config.broadcastIntervalMinutes * 60 * 1000);
     console.log(`📢 Broadcast scheduled every ${config.broadcastIntervalMinutes} min to ${targets.length} group(s)`);
+    console.log('📢 Broadcast group IDs:', targets.map((t) => t.groupId).join(', '));
   } else if (config.broadcastEnabled && !hasBroadcastGroups && !hasSingleGroup) {
     console.log('📢 Broadcast enabled but no groups configured. Add broadcastGroups or broadcastGroupId in config.js');
   }

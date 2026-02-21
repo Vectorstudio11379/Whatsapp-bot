@@ -76,7 +76,7 @@ GOODLUCK & GODBLESS 💚`,
 
 Kindly fill out the form below and someone will be in contact with you. 👇👇
 
-https://forms.gle/MD5S751UxDaZ3wjFA
+https://forms.gle/u82ADRWtXCcTLbod9
 
 P.S. MAKE SURE TO JOIN OUR WHATSAPP CHANNEL FOR MORE INCOME EARNING OPPORTUNITIES. ⬇️⬇️
 https://whatsapp.com/channel/0029Vb6gzhAKWEKhdjbiUY3Z
