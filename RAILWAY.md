@@ -63,6 +63,8 @@ Example: `mongodb+srv://user:MyPass123@cluster0.xxxxx.mongodb.net/whatsapp`
 
 ## Troubleshooting
 
+**"libglib-2.0.so.0: cannot open shared object file"** – The project includes a `Dockerfile` that installs Chromium dependencies. Railway should use it automatically. If not, ensure Railway is building from the Dockerfile (Settings → Build → Builder: Dockerfile).
+
 **"Build failed"** – Check the build logs. Ensure `package.json` has correct `start` script.
 
 **"No QR code"** – Wait 2–3 min for Puppeteer to start. Check logs for errors.
