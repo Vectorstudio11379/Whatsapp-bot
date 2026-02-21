@@ -151,14 +151,17 @@ client.on('ready', async () => {
             continue;
           }
 
-          const imgPath = target.imagePath
-            ? (path.isAbsolute(target.imagePath) ? target.imagePath : path.join(__dirname, target.imagePath))
-            : defaultImagePath;
+          const skipImage = target.imagePath === null || target.imagePath === false;
+          const imgPath = skipImage
+            ? null
+            : (target.imagePath
+              ? (path.isAbsolute(target.imagePath) ? target.imagePath : path.join(__dirname, target.imagePath))
+              : defaultImagePath);
 
           let media = null;
-          if (fs.existsSync(imgPath)) {
+          if (imgPath && fs.existsSync(imgPath)) {
             media = MessageMedia.fromFilePath(imgPath);
-          } else {
+          } else if (imgPath) {
             const altPath = imgPath.replace(/\.jpeg$/i, '.jpg');
             if (fs.existsSync(altPath)) media = MessageMedia.fromFilePath(altPath);
             else console.log('Broadcast: Image not found at', imgPath, '- sending text only');

@@ -84,7 +84,7 @@ https://whatsapp.com/channel/0029Vb6gzhAKWEKhdjbiUY3Z
 FOR A BETTER CHANCE TO BE NOTICED MAKE SURE TO FILL YOUR FORM ASAP
 
 GOODLUCK & GODBLESS 💚`,
-      imagePath: 'WhatsApp Image 2026-02-21 at 11.15.06.jpeg',
+      imagePath: null, // Text only - avoids "Waiting for this message" with image on some devices
     },
   ],
 
