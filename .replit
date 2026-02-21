@@ -1,0 +1,9 @@
+run = "npm start"
+language = "nodejs"
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["npm", "start"]
+deploymentTarget = "cloudrun"
