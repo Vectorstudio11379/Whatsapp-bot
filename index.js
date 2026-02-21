@@ -74,7 +74,7 @@ async function createClient() {
           // Ignore - session may not exist
         }
       }
-      console.log('📱 Scan the new QR code when it appears. Remove CLEAR_SESSION after linking.');
+      console.log('📱 Scan the new QR (or use pairing code if PHONE_NUMBER is set). Remove CLEAR_SESSION after linking.');
     }
     authStrategy = new RemoteAuth({
       store,
@@ -90,11 +90,20 @@ async function createClient() {
     authStrategy = new LocalAuth({ dataPath: './.wwebjs_auth' });
   }
 
-  return new Client({
+  const phoneNumber = (process.env.PHONE_NUMBER || '').replace(/\D/g, '');
+  if (phoneNumber.length >= 10) {
+    console.log('Using pairing code (PHONE_NUMBER set). Check logs for the 8-character code.');
+  }
+  const clientOpts = {
     authStrategy,
     puppeteer: puppeteerConfig,
-    authTimeoutMs: 120000, // 2 min to scan QR
-  });
+    authTimeoutMs: 120000, // 2 min to scan/link
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  };
+  if (phoneNumber.length >= 10) {
+    clientOpts.pairWithPhoneNumber = { phoneNumber, showNotification: true, intervalMs: 180000 };
+  }
+  return new Client(clientOpts);
 }
 
 let client;
@@ -102,11 +111,17 @@ let client;
 async function main() {
   client = await createClient();
 
-  // QR Code for first-time login
+  // Pairing code (when PHONE_NUMBER is set) - often works when QR fails with "couldn't link device"
+  client.on('code', (code) => {
+    console.log('\n📱 PAIRING CODE (use this instead of QR if QR fails):\n');
+    console.log('   ', code, '\n');
+    console.log('   On your phone: WhatsApp → Linked Devices → Link a Device → Link with phone number\n');
+  });
+
+  // QR Code for first-time login (when PHONE_NUMBER is not set)
   client.on('qr', (qr) => {
     console.log('\n📱 Scan this QR code with WhatsApp on your phone (scan quickly - it expires in ~20 sec):\n');
     qrcode.generate(qr, { small: true });
-    // Cloud/Railway: terminal QR may not render - open this URL in your browser to scan
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`;
     console.log('\n🔗 Or open this URL in your browser to see the QR code:\n', qrUrl, '\n');
   });

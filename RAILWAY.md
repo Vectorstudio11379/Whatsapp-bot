@@ -35,6 +35,7 @@ Example: `mongodb+srv://user:MyPass123@cluster0.xxxxx.mongodb.net/whatsapp`
 4. Add:
    - **Key:** `MONGODB_URI`
    - **Value:** Your MongoDB connection string (paste the full URI)
+   - **Optional:** `PHONE_NUMBER` = your WhatsApp number (e.g. `2348012345678`) to use pairing code instead of QR (helps when QR shows "couldn't link device")
 
 5. Railway will **redeploy automatically** when you save
 
@@ -75,4 +76,8 @@ Example: `mongodb+srv://user:MyPass123@cluster0.xxxxx.mongodb.net/whatsapp`
 
 **Session lost after redeploy** – Session is saved in MongoDB. You should NOT need to scan again unless you clear the DB.
 
-**"Couldn't link device"** – Corrupted session. Fix: Add variable `CLEAR_SESSION` = `true` in Railway Variables, redeploy. When the new QR appears, scan it quickly (QR expires in ~20 sec). After linking, remove `CLEAR_SESSION` and redeploy.
+**"Couldn't link device"** – Try pairing code instead of QR:
+1. Add `CLEAR_SESSION` = `true` and `PHONE_NUMBER` = your number (e.g. `2348012345678` for Nigeria, no + or spaces)
+2. Redeploy. Check logs for the **8-character pairing code**
+3. On your phone: WhatsApp → Linked Devices → Link a Device → **Link with phone number** → enter the code
+4. After linking, remove `CLEAR_SESSION` (keep `PHONE_NUMBER` if you prefer pairing code for future links)
