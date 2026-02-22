@@ -167,22 +167,17 @@ client.on('ready', async () => {
         : [{ groupId: config.broadcastGroupId, message: config.broadcastMessage, imagePath: config.broadcastImagePath }];
 
       console.log('📢 Broadcast: Starting broadcast to', targets.length, 'group(s)...');
+      const withTimeout = (p, ms, label) =>
+        Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`${label} timeout ${ms}s`)), ms))]);
       for (const target of targets) {
         try {
-          const chat = await client.getChatById(target.groupId);
+          console.log('Broadcast: Fetching chat', target.groupId, '...');
+          const chat = await withTimeout(client.getChatById(target.groupId), 90000, 'getChatById');
           if (!chat || !chat.isGroup) {
             console.error('Broadcast: Invalid group ID or not a group:', target.groupId);
             continue;
           }
-
-          // Verify bot is in the group - messages won't appear if bot isn't a member
-          const participants = chat.participants || [];
-          const participantsList = Array.isArray(participants) ? participants : [...(participants.values?.() || participants)];
-          const botId = client.info?.wid?._serialized;
-          const botInGroup = botId && participantsList.some((p) => (p.id?._serialized || p.id) === botId);
-          if (!botInGroup && botId) {
-            console.warn('Broadcast: ⚠️ Bot may not be in group', chat.name, '- add bot number to group!');
-          }
+          console.log('Broadcast: Sending to', chat.name, '...');
 
           const skipImage = target.imagePath === null || target.imagePath === false;
           const imgPath = skipImage
@@ -201,10 +196,10 @@ client.on('ready', async () => {
           }
 
           if (media) {
-            await chat.sendMessage(media, { caption: target.message });
+            await withTimeout(chat.sendMessage(media, { caption: target.message }), 90000, 'sendMessage');
             console.log('Broadcast: ✅ Sent (with image) to', chat.name);
           } else {
-            await chat.sendMessage(target.message);
+            await withTimeout(chat.sendMessage(target.message), 90000, 'sendMessage');
             console.log('Broadcast: ✅ Sent (text only) to', chat.name);
           }
           // Delay between groups to avoid rate limiting
