@@ -5,14 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "postinstall": "patch-package"
   },
-  "keywords": ["whatsapp", "bot", "group-management", "spam"],
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "group-management",
+    "spam"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.4.5",
     "mongoose": "^8.0.0",
+    "patch-package": "^8.0.1",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.26.0",
     "wwebjs-mongo": "^1.1.0"

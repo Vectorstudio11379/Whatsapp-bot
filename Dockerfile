@@ -36,4 +36,7 @@ RUN npm ci --omit=dev
 
 COPY . .
 
+# Apply RemoteAuth TpcdMetadata fix (ENOENT on ephemeral fs)
+RUN npx patch-package
+
 CMD ["node", "index.js"]

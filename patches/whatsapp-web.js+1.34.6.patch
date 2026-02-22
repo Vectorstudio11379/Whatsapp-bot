@@ -1,0 +1,50 @@
+diff --git a/node_modules/whatsapp-web.js/src/authStrategies/RemoteAuth.js b/node_modules/whatsapp-web.js/src/authStrategies/RemoteAuth.js
+index a14106d..d95d1eb 100644
+--- a/node_modules/whatsapp-web.js/src/authStrategies/RemoteAuth.js
++++ b/node_modules/whatsapp-web.js/src/authStrategies/RemoteAuth.js
+@@ -174,22 +174,31 @@ class RemoteAuth extends BaseAuthStrategy {
+     async deleteMetadata() {
+         const sessionDirs = [this.tempDir, path.join(this.tempDir, 'Default')];
+         for (const dir of sessionDirs) {
+-            const sessionFiles = await fs.promises.readdir(dir);
+-            for (const element of sessionFiles) {
+-                if (!this.requiredDirs.includes(element)) {
+-                    const dirElement = path.join(dir, element);
+-                    const stats = await fs.promises.lstat(dirElement);
+-    
+-                    if (stats.isDirectory()) {
+-                        await fs.promises.rm(dirElement, {
+-                            recursive: true,
+-                            force: true,
+-                            maxRetries: this.rmMaxRetries,
+-                        }).catch(() => {});
+-                    } else {
+-                        await fs.promises.unlink(dirElement).catch(() => {});
++            try {
++                const sessionFiles = await fs.promises.readdir(dir);
++                for (const element of sessionFiles) {
++                    if (!this.requiredDirs.includes(element)) {
++                        const dirElement = path.join(dir, element);
++                        try {
++                            const stats = await fs.promises.lstat(dirElement);
++                            if (stats.isDirectory()) {
++                                await fs.promises.rm(dirElement, {
++                                    recursive: true,
++                                    force: true,
++                                    maxRetries: this.rmMaxRetries,
++                                }).catch(() => {});
++                            } else {
++                                await fs.promises.unlink(dirElement).catch(() => {});
++                            }
++                        } catch (e) {
++                            // ENOENT: file may have been deleted (e.g. TpcdMetadata on ephemeral fs)
++                            if (e.code !== 'ENOENT') throw e;
++                        }
+                     }
+                 }
++            } catch (e) {
++                if (e.code === 'ENOENT') return; // dir doesn't exist
++                throw e;
+             }
+         }
+     }
