@@ -136,8 +136,10 @@ client.on('ready', async () => {
   } catch (_) {}
 
   // List all groups with their IDs (so you can copy the ID for broadcastGroupId)
+  (async () => {
   try {
-    const chats = await client.getChats();
+    const timeout = (ms) => new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms));
+    const chats = await Promise.race([client.getChats(), timeout(45000)]);
     const groups = chats.filter((c) => c.isGroup);
     console.log('\n📋 GROUPS THE BOT IS IN (copy ID for config.js broadcastGroupId):\n');
     groups.forEach((g, i) => {
@@ -146,8 +148,9 @@ client.on('ready', async () => {
     });
     console.log('---\n');
   } catch (err) {
-    console.error('Could not list groups:', err.message);
+    console.log('Group list skipped:', err.message, '(broadcast still runs)');
   }
+  })();
 
   // Scheduled broadcast - send message + image to groups every X minutes
   const hasBroadcastGroups = config.broadcastGroups?.length > 0;
