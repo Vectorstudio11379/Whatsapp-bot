@@ -129,6 +129,12 @@ async function main() {
 client.on('ready', async () => {
   console.log('✅ Bot is ready! Connected to WhatsApp.');
 
+  // Log bot's number - THIS number must be in the broadcast groups for messages to appear
+  try {
+    const botNumber = client.info?.wid?.user || 'unknown';
+    console.log('\n📱 BOT NUMBER:', botNumber, '- Add this number to your groups if messages are not appearing!\n');
+  } catch (_) {}
+
   // List all groups with their IDs (so you can copy the ID for broadcastGroupId)
   try {
     const chats = await client.getChats();
@@ -166,6 +172,15 @@ client.on('ready', async () => {
             continue;
           }
 
+          // Verify bot is in the group - messages won't appear if bot isn't a member
+          const participants = chat.participants || [];
+          const participantsList = Array.isArray(participants) ? participants : [...(participants.values?.() || participants)];
+          const botId = client.info?.wid?._serialized;
+          const botInGroup = botId && participantsList.some((p) => (p.id?._serialized || p.id) === botId);
+          if (!botInGroup && botId) {
+            console.warn('Broadcast: ⚠️ Bot may not be in group', chat.name, '- add bot number to group!');
+          }
+
           const skipImage = target.imagePath === null || target.imagePath === false;
           const imgPath = skipImage
             ? null
@@ -189,6 +204,8 @@ client.on('ready', async () => {
             await chat.sendMessage(target.message);
             console.log('Broadcast: ✅ Sent (text only) to', chat.name);
           }
+          // Delay between groups to avoid rate limiting
+          await new Promise((r) => setTimeout(r, 3000));
         } catch (err) {
           console.error('Broadcast: ❌ Failed for', target.groupId, ':', err.message);
         }
@@ -204,6 +221,7 @@ client.on('ready', async () => {
     setInterval(runBroadcast, config.broadcastIntervalMinutes * 60 * 1000);
     console.log(`📢 Broadcast scheduled every ${config.broadcastIntervalMinutes} min to ${targets.length} group(s)`);
     console.log('📢 Broadcast group IDs:', targets.map((t) => t.groupId).join(', '));
+    console.log('📢 If messages don\'t appear: ensure the BOT NUMBER (above) is added to each group.');
   } else if (config.broadcastEnabled && !hasBroadcastGroups && !hasSingleGroup) {
     console.log('📢 Broadcast enabled but no groups configured. Add broadcastGroups or broadcastGroupId in config.js');
   }
