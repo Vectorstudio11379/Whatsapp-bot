@@ -1,0 +1,23 @@
+# Fly.io config for WhatsApp bot
+# Deploy: fly deploy
+# Logs: fly logs
+
+app = "whatsapp-bot"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+
+# Region close to you (jnb=Johannesburg, lhr=London, ewr=Newark)
+primary_region = "jnb"
+
+# No http_service - long-running worker, not a web app
+# Set secrets: fly secrets set MONGODB_URI="..." PHONE_NUMBER="..."
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "1gb"
+
+swap_size_mb = 512
